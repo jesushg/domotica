@@ -15,6 +15,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('sensor', function () {
-    dd(\App\Sensor::all());
-});
+Route::get('sensor', 'SensorController@index');
