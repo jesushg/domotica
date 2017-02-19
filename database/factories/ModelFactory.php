@@ -37,3 +37,15 @@ $factory->define(App\Sensor::class, function (Faker\Generator $faker) {
         'refreshTime' => $faker->numberBetween(0,3600)
     ];
 });
+
+$factory->define(App\User::class, function (Faker\Generator $faker) {
+    return [
+        'firstName' => $faker->firstName,
+        'lastName' => $faker->lastName,
+        'password' => $faker->password(),
+        'email' => $faker->email,
+        'rol' => $faker->randomElement(\App\User::$roles),
+        'password' => bcrypt('1234'),
+        'token' => bcrypt(date('YmdHms')),
+    ];
+});

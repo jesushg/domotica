@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => env('MAIL_FROM', 'jesushg@domotica.dev'), 'name' => env('MAIL_FROM_NAME', 'jesushg')],
 
     /*
     |--------------------------------------------------------------------------
