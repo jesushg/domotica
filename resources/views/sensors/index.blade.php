@@ -21,6 +21,7 @@
                                 <th>Tiempo de refresco</th>
                             </tr>
                             @foreach($sensors as $sensor)
+                                {{ $sensor->variables() }}
                                 <tr>
                                     <td>{{ $sensor->id }}</td>
                                     <td>{{ $sensor->channel }}</td>
