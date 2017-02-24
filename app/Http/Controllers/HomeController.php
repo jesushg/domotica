@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\ActuatorLuminosity;
 use App\Http\Requests;
+use App\Sensor;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -24,6 +26,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $sensors = Sensor::where('type', 'ldr')->get();
+        $luminosityActuator = ActuatorLuminosity::class;
+        return view('home.index',['sensorsLDR'=>$sensors, 'luminosityActuator' => $luminosityActuator]);
     }
 }

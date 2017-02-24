@@ -15,7 +15,28 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('sensor', 'SensorController@index');
+
+//Route::get('actuator', 'ActuatorController@index');
+//Route::resource('actuator', 'ActuatorController');
+//Route::controllers(['act' => 'ActuatorController',]);
+
 Route::auth();
 
+Route::resource('users', 'Auth\AuthController', [
+    'only' => ['index', 'edit', 'update', 'destroy']
+]);
+
 Route::get('/home', 'HomeController@index');
+
+Route::resource('location', 'LocationController');
+
+Route::get('location/image/{filename}', 'LocationController@getFoto');
+
+Route::group(['prefix' => 'circuit'], function() {
+
+    Route::resource('sensor', 'SensorController');
+
+    Route::resource('actuatorluminosity', 'Circuit\ActuatorLuminosityController');
+
+    Route::resource('programmed/event/luminosity', 'ProgrammedEventLuminosityController');
+});

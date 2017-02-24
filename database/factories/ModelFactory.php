@@ -21,31 +21,37 @@
 //});
 
 
-$factory->define(App\Circuit::class, function (Faker\Generator $faker) {
-    return [
-        'channel' => $faker->unique()->numberBetween(0,50),
-        'emulated' => $faker->boolean(),
-        'description' => $faker->sentence()
-    ];
-});
 
 $factory->define(App\Sensor::class, function (Faker\Generator $faker) {
     return [
-        'id' => factory('App\Circuit')->create()->id,
+        'channel' => $faker->unique()->numberBetween(0,50),
+        'emulated' => $faker->boolean(),
+        'description' => $faker->sentence(),
         'type' => $faker->randomElement(\App\Sensor::$types),
         'value' => $faker->randomNumber(),
         'refreshTime' => $faker->numberBetween(0,3600)
     ];
 });
 
+$factory->define(App\ActuatorLuminosity::class, function (Faker\Generator $faker) {
+    return [
+        'channel' => $faker->unique()->numberBetween(0,50),
+        'emulated' => $faker->boolean(),
+        'description' => $faker->sentence(),
+        'type' => $faker->randomElement(\App\ActuatorLuminosity::$types),
+        'percentValue' => $faker->numberBetween(0,100)
+    ];
+});
+
 $factory->define(App\User::class, function (Faker\Generator $faker) {
+    $faker = Faker\Factory::create('es_ES');
     return [
         'firstName' => $faker->firstName,
         'lastName' => $faker->lastName,
         'password' => $faker->password(),
         'email' => $faker->email,
         'rol' => $faker->randomElement(\App\User::$roles),
-        'password' => bcrypt('1234'),
+        'password' => bcrypt('123456'),
         'token' => bcrypt(date('YmdHms')),
     ];
 });

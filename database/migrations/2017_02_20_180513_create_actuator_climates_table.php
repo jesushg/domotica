@@ -3,11 +3,8 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSensorTable extends Migration
+class CreateActuatorClimatesTable extends Migration
 {
-
-
-
     /**
      * Run the migrations.
      *
@@ -15,18 +12,15 @@ class CreateSensorTable extends Migration
      */
     public function up()
     {
-        Schema::create('sensors', function (Blueprint $table) {
+        Schema::create('actuator_climates', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('channel')->unique();
             $table->boolean('emulated');
-            $table->unsignedInteger('id_location');
             $table->string('description');
-            $table->enum('type', \App\Sensor::$types);
-            $table->integer('value');
-            $table->unsignedInteger('refreshTime');
-
+            $table->boolean('state');
+            $table->integer('temperature');
+            $table->enum('type',\App\ActuatorClimate::$types);
             $table->timestamps();
-
         });
     }
 
@@ -37,6 +31,6 @@ class CreateSensorTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sensors');
+        Schema::drop('actuator_climates');
     }
 }

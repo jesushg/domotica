@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use Illuminate\Support\Facades\Session;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -37,9 +38,31 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('owner',['only' => ['showRegistrationForm','register']]);
-        $this->middleware($this->guestMiddleware(), ['except' => ['logout','showRegistrationForm','register']]);
+        $this->middleware('owner',['except' => ['showLoginForm','login','logout']]);
+        $this->middleware($this->guestMiddleware(), ['only' => ['showLoginForm', 'login']]);
+    }
 
+    public function index(){
+//        return "estás en index de AuthController";
+        $users = User::all();
+        return view('users.index', compact('users'));
+    }
+
+    public function edit($id){
+        return "te dispones a editar un usuario" . $id;
+    }
+
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+        Session::flash('message', $user->fullName . " ha sido eliminado");
+        return redirect()->route('users.index');
     }
 
     /**
@@ -51,7 +74,8 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|max:255',
+            'firstName' => 'required|max:255',
+            'lastName' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:6|confirmed',
         ]);
@@ -66,7 +90,8 @@ class AuthController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
+            'firstName' => $data['firstName'],
+            'lastName' => $data['lastName'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);

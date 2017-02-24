@@ -1,26 +1,27 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Circuit;
 
+use App\ActuatorLuminosity;
+use App\Http\Controllers\Controller;
 use App\Location;
-use App\Sensor;
-use App\Circuit;
-
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
 
-class SensorController extends Controller
+class ActuatorLuminosityController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(){
-        $sensors = Sensor::all();
-        return view('sensors.index',compact('sensors'));
+    public function index()
+    {
+        $actuators = ActuatorLuminosity::all();
+//        dd($actuators);
+        return view('circuits.actuators.luminosity.index', compact('actuators'));
     }
 
     /**
@@ -56,7 +57,13 @@ class SensorController extends Controller
                 $freeChannels[$i] = $i;
             }
         }
-        return view('sensors.create', compact('idNameLocations', 'freeChannels'));
+
+
+
+//        $freeChannels = array_map(function($o) { return $o->channel; }, $busyChannels);
+//        dd($freeChannels);
+        return view('circuits.actuators.luminosity.create', compact('idNameLocations', 'freeChannels'));
+
     }
 
     /**
@@ -67,8 +74,9 @@ class SensorController extends Controller
      */
     public function store(Request $request)
     {
-        Sensor::create($request->all());
-        return redirect()->route('circuit.sensor.index');
+        $actuator = new ActuatorLuminosity($request->all());
+        $actuator->save();
+        return redirect()->route('circuit.actuatorluminosity.index');
     }
 
     /**

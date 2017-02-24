@@ -3,11 +3,8 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSensorTable extends Migration
+class CreateActuatorLuminositiesTable extends Migration
 {
-
-
-
     /**
      * Run the migrations.
      *
@@ -15,18 +12,17 @@ class CreateSensorTable extends Migration
      */
     public function up()
     {
-        Schema::create('sensors', function (Blueprint $table) {
+        Schema::create('actuator_luminosities', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('channel')->unique();
             $table->boolean('emulated');
             $table->unsignedInteger('id_location');
             $table->string('description');
-            $table->enum('type', \App\Sensor::$types);
-            $table->integer('value');
-            $table->unsignedInteger('refreshTime');
-
+            $table->integer('percentValue');
+            $table->enum('type',\App\ActuatorLuminosity::$types);
             $table->timestamps();
 
+            $table->foreign('id_location')->references('id')->on('locations')->onDelete('cascade');
         });
     }
 
@@ -37,6 +33,6 @@ class CreateSensorTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sensors');
+        Schema::drop('actuator_luminosities');
     }
 }

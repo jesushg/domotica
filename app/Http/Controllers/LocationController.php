@@ -3,24 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Location;
-use App\Sensor;
-use App\Circuit;
-
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 
-class SensorController extends Controller
+class LocationController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(){
-        $sensors = Sensor::all();
-        return view('sensors.index',compact('sensors'));
+    public function index()
+    {
+        $locations = Location::all();
+//        $result = glob(storage_path() . '/app/locations/prueba1.*')[0];
+//        dd($result);
+        return view('locations.index', compact('locations'));
     }
 
     /**
@@ -30,33 +39,24 @@ class SensorController extends Controller
      */
     public function create()
     {
-        $locations = Location::all();
-        if($locations->isEmpty()){
-            return redirect()->route('location.create');
+        return view('locations.create');
+    }
+
+    public function getFoto($filename){
+
+        $path = storage_path() . '/app/locations/' . $filename;
+
+        if(!File::exists($path)){
+            abort(404);
         }
-        $idNameLocations = [];
-        foreach ($locations as $location){
-            $idNameLocations[$location->id] = $location->name;
-        }
-//        dd($idNameLocations);
-        $busyChannels = DB::table('actuator_luminosities')->select('channel')->get();
-//        $freeChannels = [];
-//        foreach ($busyChannels as $busyChannel){
-//            $freeChannels[] = $busyChannel->channel;
-//        }
-        $freeChannels = [];
-        for ($i = 1; $i <= 30; $i++){
-            $iIsFree = true;
-            foreach ($busyChannels as $busyChannel){
-                if($i == $busyChannel->channel){
-                    $iIsFree = false;
-                }
-            }
-            if ($iIsFree){
-                $freeChannels[$i] = $i;
-            }
-        }
-        return view('sensors.create', compact('idNameLocations', 'freeChannels'));
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
     }
 
     /**
@@ -67,8 +67,19 @@ class SensorController extends Controller
      */
     public function store(Request $request)
     {
-        Sensor::create($request->all());
-        return redirect()->route('circuit.sensor.index');
+        $location = Location::create($request->all());
+//        $location->save();
+
+        if ($request->file('image')) {
+            Storage::put(
+                'locations/' . $location->id . "." . $request->file('image')->extension(),
+                file_get_contents($request->file('image'))
+            );
+            $location->file_extension = $request->file('image')->extension();
+            $location->save();
+        }
+
+        return redirect()->route('location.index');
     }
 
     /**
